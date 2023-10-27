@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Registration Form</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div>
+        <h1 id="confirm" class="confirm">
+            Meal App Food Page
+        </h1>
+    </div>
+    <div class="filter">
+        <form action="/action_page.php">
+            <label for="foods">Choose a Food Type:</label>
+            <select name="foods" id="foods">
+              <!-- <optgroup label="Swedish Cars"> -->
+                <option value="Soup">Soups</option>
+                <option value="Swallow">Swallow</option>
+              <!-- </optgroup> -->
+                <option value="SingleFood">SingleFood</option>
+                <option value="Snacks">Snacks</option>
+                <option value="Drinks">Drinks</option>
+                <option value="Protiens">Protiens</option>
+                <option value="Dishes">Dishes</option>
+            </select>
+            <br><br>
+            <input type="submit" value="Select">
+          </form>
+    </div>
+    <div>
+        <ul>
+            <% food.forEach((item=>{%>
+                <li>
+                    <%=item.name%>
+                    <%=item.price%>
+                </li>
+            <%}))%>
+        </ul>
+    </div>
+    <div class="buy-food">
+        <button>Buy Selected Food</button>
+    </div>
+    <script src="/scripts/main.js"></script>
+  </body>
+</html>

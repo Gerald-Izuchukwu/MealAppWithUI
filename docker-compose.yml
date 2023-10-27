@@ -1,0 +1,86 @@
+version: '3'
+services:
+  mongodb:
+    image: mongo:latest
+    restart: always
+    networks:
+      - mynetwork
+    ports:
+      - 27019:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+  
+  mongo-express:
+    image: mongo-express
+    restart: always
+    networks:
+      - mynetwork
+    ports:
+      - 8082:8081
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=example
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+
+  rabbitmq:
+    image: rabbitmq:3.9-rc-management
+    restart: always
+    networks:
+      - mynetwork
+    ports:
+      - 5674:5672
+      - 15674:15672
+    volumes:
+      - "./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf"
+    env_file:
+      - rabbitmq.conf
+
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 20s
+      retries: 5
+
+  order-service:
+    image: mealapp-order-service:latest
+    depends_on:
+      - rabbitmq
+      - mongodb
+    restart: always
+    networks:
+      - mynetwork
+    ports:
+      - 9600:9600
+    env_file:
+      - ./config.env
+
+  product-service:
+    image: mealapp-product:latest
+    depends_on:
+      - rabbitmq
+      - mongodb
+    restart: always
+    networks:
+      - mynetwork
+    ports:
+      - 9601:9601
+    env_file:
+      - ./config.env
+
+  user-auth-service:
+    image: mealapp-auth:latest
+    restart: always
+    networks:
+      - mynetwork
+    ports:
+      - 9602:9602
+    env_file:
+      - ./config.env
+
+
+networks:
+  mynetwork:
+    driver: bridge
+
